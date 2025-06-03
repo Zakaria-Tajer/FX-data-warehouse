@@ -21,10 +21,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -45,9 +42,8 @@ public class DealService {
         List<String> errorMessages = new ArrayList<>();
 
         if (file.isEmpty()) {
-            errorMessages.add(messageSourceResolver.get("error.csv.empty"));
-            log.warn("File is Empty");
-            return new ResultsDto(successCount, duplicateCount, invalidCount, errorMessages);
+            log.warn(messageSourceResolver.get("error.csv.empty"));
+            throw new IllegalArgumentException(messageSourceResolver.get("error.csv.empty"));
         }
 
 
@@ -56,8 +52,8 @@ public class DealService {
 
         if (contentType == null || (!contentType.equals("text/csv") && !contentType.equals("application/vnd.ms-excel"))
                 || (fileName != null && !fileName.toLowerCase().endsWith(".csv"))) {
-            log.warn("Only CSV files are allowed.");
-            throw new IllegalArgumentException("Invalid file type. Only CSV files are allowed.");
+            log.warn(messageSourceResolver.get("error.csv.only"));
+            throw new IllegalArgumentException(messageSourceResolver.get("error.csv.only"));
         }
 
         try (Reader reader = new InputStreamReader(file.getInputStream())) {
@@ -73,21 +69,31 @@ public class DealService {
                 dtoList = csvToBean.parse();
             } catch (RuntimeException e) {
                 log.error("Error parsing CSV file", e);
-                throw new IllegalArgumentException("Invalid CSV format: " + e.getMessage(), e);
+                throw new IllegalArgumentException(messageSourceResolver.get("error.csv.invalid.form") + e.getMessage(), e);
             }
 
-
+            Set<String> appearedID = new HashSet<>();
             for (DealsDto dto : dtoList) {
                 String reason = validator.validate(Deal.toEntity(dto));
+
+
+
+
+                if (!appearedID.add(dto.getDealId())) {
+                    errorMessages.add("Duplicate deal in file [" + dto.getDealId() + "] ignored.");
+                    duplicateCount++;
+                    continue;
+                }
+
                 if (reason != null) {
-//                    log.info("Invalid deal skipped: {} - Reason: {}", dto.getDealId(), reason);
                     errorMessages.add("Invalid deal [" + dto.getDealId() + "]: " + reason);
                     invalidCount++;
                     continue;
                 }
 
+
+
                 if (dealRepository.existsByDealId(dto.getDealId())) {
-//                    log.info("Duplicate deal skipped: {}", dto.getDealId());
                     errorMessages.add("Duplicate deal [" + dto.getDealId() + "] ignored.");
                     duplicateCount++;
                     continue;

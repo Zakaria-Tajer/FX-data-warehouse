@@ -7,7 +7,13 @@ test:
 # Run tests and open JaCoCo coverage report
 coverage: test
 	@echo "Opening coverage report..."
-	@open target/site/jacoco/index.html || xdg-open target/site/jacoco/index.html || echo "Open the file manually: target/site/jacoco/index.html"
+	@( \
+		{ command -v open >/dev/null 2>&1 && open target/site/jacoco/index.html; } || \
+		{ command -v xdg-open >/dev/null 2>&1 && xdg-open target/site/jacoco/index.html; } || \
+		{ command -v cygstart >/dev/null 2>&1 && cygstart target/site/jacoco/index.html; } || \
+		{ command -v cmd.exe >/dev/null 2>&1 && cmd.exe /c start "" "target/site/jacoco/index.html"; } || \
+		echo "Could not open the file automatically. Please open manually: target/site/jacoco/index.html" \
+	)
 
 # Build and run with Docker
 docker-up:
