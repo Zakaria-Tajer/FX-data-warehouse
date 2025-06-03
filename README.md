@@ -1,4 +1,4 @@
-# 📦 Data Warehouse CSV Importer
+# 📦 ClusteredData Warehouse
 
 This project provides a RESTful service to import and validate currency deal data from CSV files into a PostgreSQL database.
 
