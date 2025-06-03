@@ -40,14 +40,16 @@ public class DealValidator {
         }
 
         if (deal.getTimestamp() == null || deal.getTimestamp().isAfter(LocalDateTime.now())) {
+            log.warn("Invalid or future timestamp: {}", deal.getTimestamp());
             return messageSourceResolver.get("error.timestamp.invalid");
         }
 
         if (deal.getAmount() == null || deal.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            log.warn("Amount must be a positive number: {}", deal.getAmount());
             return messageSourceResolver.get("error.amount.invalid");
         }
 
-        return null; // valid
+        return null;
     }
 
 }
