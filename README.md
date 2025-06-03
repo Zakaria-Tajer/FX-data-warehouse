@@ -35,6 +35,9 @@ This project provides a RESTful service to import and validate currency deal dat
 - `utils/` – Utility classes (helpers)
 
 
+
+
+
 ## 📂 File Format
 
 Expected CSV Header:
@@ -49,6 +52,14 @@ Example row:
 123,USD,EUR,2024-06-02T12:00:00,150.75
 ```
 
+### ✅ Validation Rules
+
+Each row in the CSV must comply with the following rules:
+
+- `dealId`: Must be unique and non-null.
+- `fromCurrency` / `toCurrency`: Must be valid ISO 4217 currency codes (`USD`, `EUR`) and listed in `valid-currencies.txt`.
+- `amount`: Must be a positive decimal number.
+- `timestamp`: Must follow ISO-8601 date-time format (`2025-06-02T12:00:00`).
 
 ## 📥 API Usage
 
@@ -94,6 +105,11 @@ make test
 ```
 make coverage
 ```
+
+## ✅ Testing Coverage
+
+![Coverage Report](src/main/resources/static/coverage.png)
+
 
 ## 📚 Resource Files
 
