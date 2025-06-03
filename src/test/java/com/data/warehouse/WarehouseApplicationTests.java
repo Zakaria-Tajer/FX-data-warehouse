@@ -52,6 +52,7 @@ class WarehouseApplicationTests {
 		WarehouseApplication.main(new String[] {});
 	}
 
+
 	@Test
 	void testInvalidContentType() {
 		MockMultipartFile file = new MockMultipartFile("file", "data.txt", "text/plain", "invalid content".getBytes());
@@ -118,20 +119,6 @@ class WarehouseApplicationTests {
 	}
 
 	@Test
-	void testInvalidAmounts() {
-		Deal deal = Deal.builder()
-				.dealId("123")
-				.fromCurrency("USD")
-				.toCurrency("EUR")
-				.timestamp(LocalDateTime.now())
-				.amount(BigDecimal.ZERO)
-				.build();
-
-		String error = dealValidator.validate(deal);
-		assertEquals(messageResolver.get("error.amount.invalid"), error);
-	}
-
-	@Test
 	void ProcessCsvWithoutError() {
 		MockMultipartFile emptyFile = new MockMultipartFile(
 				"file",
@@ -174,29 +161,47 @@ class WarehouseApplicationTests {
 
 	}
 
+
+	@Test
+	void testInvalidAmount() {
+		Deal deal = Deal.builder()
+				.dealId("123")
+				.fromCurrency("USD")
+				.toCurrency("EUR")
+				.timestamp(LocalDateTime.now())
+				.amount(BigDecimal.ZERO)
+				.build();
+
+		String error = dealValidator.validate(deal);
+		assertEquals(messageResolver.get("error.amount.invalid"), error);
+	}
+
 	@Test
 	void testLargeCsv() throws IOException {
 		int totalDeals = 1000;
-		StringBuilder csvBuilder = new StringBuilder();
-		csvBuilder.append("dealId,fromCurrency,toCurrency,timestamp,amount\n");
+
+
+		StringBuilder csv = new StringBuilder();
+		csv.append("dealId,fromCurrency,toCurrency,timestamp,amount\n");
 
 		for (int i = 0; i < totalDeals; i++) {
-			csvBuilder.append(String.format("D%04d,USD,EUR,2025-05-31T10:15:30,%.2f\n", i, 1000.0 + i));
-		}
+			csv.append(String.format("D%04d,USD,EUR,2025-05-31T10:15:30,%.2f\n",
+					i, 1000.0 + (i * 0.1)));		}
 
-		byte[] csvBytes = csvBuilder.toString().getBytes(StandardCharsets.UTF_8);
 
 		MockMultipartFile file = new MockMultipartFile(
 				"file",
-				"large_test.csv",
+				"test_deals.csv",
 				"text/csv",
-				new ByteArrayInputStream(csvBytes)
+				csv.toString().getBytes()
 		);
 
 		ResultsDto result = dealService.importCsv(file);
 
-		assertEquals(0, result.getDuplicates());
-		assertEquals(totalDeals, result.getSaved());
+		assertEquals(0, result.getDuplicates(), "Should have no duplicates in fresh import");
+		assertEquals(totalDeals, result.getSaved(), "All valid deals should be saved");
+
+
 	}
 
 	@Test

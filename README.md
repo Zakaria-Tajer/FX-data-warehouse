@@ -22,6 +22,19 @@ This project provides a RESTful service to import and validate currency deal dat
 - JaCoCo (code coverage)
 - Lombok
 
+## 📁 Project Structure
+
+- `controller/` – REST endpoints
+- `services/` – Business logic and CSV parsing
+- `models/` – JPA entities
+- `repository/` – database operations.
+- `dto/` - Data Transfer Objects
+- `config/` - configuration classes (message sources)
+- `validator/` – Input validations
+- `exceptions/` – Global error handling
+- `utils/` – Utility classes (helpers)
+
+
 ## 📂 File Format
 
 Expected CSV Header:
@@ -56,18 +69,6 @@ Response includes:
 - `invalidCount`
 - `errorMessages[]`
 
-## 🧪 Testing
-
-To run tests and view coverage:
-
-```bash
-./mvnw clean test
-```
-Then open:
-
-```bash
-target/site/jacoco/index.html
-```
 
 ## 🐳 Docker Setup
 
@@ -77,18 +78,19 @@ Build and run using Docker Compose:
 docker-compose up --build
 ```
 
+## 🧰 Makefile Commands
 
-# Build the project and run with Docker
+### Build the project and run with Docker
 ```
 make docker-up
 ```
 
-# Run tests
+### Run tests
 ```
 make test
 ```
 
-# Generate coverage report
+### Generate coverage report
 ```
 make coverage
 ```
