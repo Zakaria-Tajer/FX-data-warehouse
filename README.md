@@ -18,7 +18,7 @@ This project provides a RESTful service to import and validate currency deal dat
 - PostgreSQL
 - Docker & Docker Compose
 - Maven
-- JUnit 5 & Mockito
+- JUnit & Mockito
 - JaCoCo (code coverage)
 - Lombok
 
@@ -79,12 +79,18 @@ docker-compose up --build
 
 
 # Build the project and run with Docker
+```
 make docker-up
+```
 
 # Run tests
+```
 make test
+```
 
 # Generate coverage report
+```
 make coverage
+```
 
 
