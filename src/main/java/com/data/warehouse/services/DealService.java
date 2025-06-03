@@ -55,9 +55,8 @@ public class DealService {
 
         if (contentType == null || (!contentType.equals("text/csv") && !contentType.equals("application/vnd.ms-excel"))
                 || (fileName != null && !fileName.toLowerCase().endsWith(".csv"))) {
-            errorMessages.add("Invalid file type. Only CSV files are allowed.");
             log.warn("Only CSV files are allowed.");
-            return new ResultsDto(successCount, duplicateCount, invalidCount, errorMessages);
+            throw new IllegalArgumentException("Invalid file type. Only CSV files are allowed.");
         }
 
         try (Reader reader = new InputStreamReader(file.getInputStream())) {
@@ -67,8 +66,6 @@ public class DealService {
                     .build();
 
 
-
-
             List<DealsDto> dtoList;
 
             try {
@@ -76,8 +73,6 @@ public class DealService {
             } catch (RuntimeException e) {
                 throw new IllegalArgumentException("Invalid CSV format: " + e.getMessage(), e);
             }
-
-
 
 
             for (DealsDto dto : dtoList) {
