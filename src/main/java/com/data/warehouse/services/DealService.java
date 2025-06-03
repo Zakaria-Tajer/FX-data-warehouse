@@ -76,9 +76,6 @@ public class DealService {
             for (DealsDto dto : dtoList) {
                 String reason = validator.validate(Deal.toEntity(dto));
 
-
-
-
                 if (!appearedID.add(dto.getDealId())) {
                     errorMessages.add("Duplicate deal in file [" + dto.getDealId() + "] ignored.");
                     duplicateCount++;
@@ -90,8 +87,6 @@ public class DealService {
                     invalidCount++;
                     continue;
                 }
-
-
 
                 if (dealRepository.existsByDealId(dto.getDealId())) {
                     errorMessages.add("Duplicate deal [" + dto.getDealId() + "] ignored.");
@@ -111,10 +106,6 @@ public class DealService {
 
         }
     }
-
-
-
-
 
 
 }

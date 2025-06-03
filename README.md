@@ -95,4 +95,13 @@ make test
 make coverage
 ```
 
+## 📚 Resource Files
+
+The `src/main/resources` directory contains essential files used by the application:
+
+| File | Description |
+|------|-------------|
+| `valid-currencies.txt` | List of accepted currency codes, one per line (`USD`, `EUR`). Used during CSV validation to ensure currency fields are valid. |
+| `sample.csv` | Example CSV file to test the import feature. Useful for manual or automated testing. |
+
 

@@ -25,12 +25,9 @@ public class DealController {
 
     private final DealService dealService;
 
-
     @PostMapping
     public ResponseEntity<ResultsDto> importDeals(@RequestParam("file") MultipartFile file) throws IOException {
-
-        ResultsDto results = dealService.importCsv(file);
-        return ResponseEntity.ok(results);
+        return ResponseEntity.ok(dealService.importCsv(file));
 
     }
 }

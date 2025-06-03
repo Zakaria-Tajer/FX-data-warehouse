@@ -34,7 +34,6 @@ public class DealControllerTest {
 
     @Test
     void importDeals_shouldReturnResultsDto() throws Exception {
-        // Arrange
         MockMultipartFile mockFile = new MockMultipartFile(
                 "file", "deals.csv", "text/csv", "some,csv,content\n1,2,3".getBytes()
         );
@@ -42,7 +41,6 @@ public class DealControllerTest {
         ResultsDto mockResult = new ResultsDto(50, 20, 3, List.of("row1", "row2"));
         Mockito.when(dealService.importCsv(any())).thenReturn(mockResult);
 
-        // Act & Assert
         mockMvc.perform(multipart("/api/import").file(mockFile))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
