@@ -46,6 +46,7 @@ public class DealService {
 
         if (file.isEmpty()) {
             errorMessages.add(messageSourceResolver.get("error.csv.empty"));
+            log.warn("File is Empty");
             return new ResultsDto(successCount, duplicateCount, invalidCount, errorMessages);
         }
 
@@ -71,6 +72,7 @@ public class DealService {
             try {
                 dtoList = csvToBean.parse();
             } catch (RuntimeException e) {
+                log.error("Error parsing CSV file", e);
                 throw new IllegalArgumentException("Invalid CSV format: " + e.getMessage(), e);
             }
 
@@ -78,12 +80,14 @@ public class DealService {
             for (DealsDto dto : dtoList) {
                 String reason = validator.validate(Deal.toEntity(dto));
                 if (reason != null) {
+//                    log.info("Invalid deal skipped: {} - Reason: {}", dto.getDealId(), reason);
                     errorMessages.add("Invalid deal [" + dto.getDealId() + "]: " + reason);
                     invalidCount++;
                     continue;
                 }
 
                 if (dealRepository.existsByDealId(dto.getDealId())) {
+//                    log.info("Duplicate deal skipped: {}", dto.getDealId());
                     errorMessages.add("Duplicate deal [" + dto.getDealId() + "] ignored.");
                     duplicateCount++;
                     continue;
@@ -94,11 +98,11 @@ public class DealService {
                 successCount++;
             }
 
-
+            log.info("CSV import completed: {} saved, {} duplicates, {} invalid.",
+                    successCount, duplicateCount, invalidCount);
             return new ResultsDto(successCount, duplicateCount, invalidCount, errorMessages);
 
-//            System.out.printf("Import completed: %d saved, %d duplicates, %d invalid.%n",
-//                    successCount, duplicateCount, invalidCount);
+
         }
     }
 
